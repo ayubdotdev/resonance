@@ -119,7 +119,7 @@ export function DashboardSidebar() {
         {
             title: "Voice Cloning",
             icon: Volume2
-        }
+        }       
     ]
     const othersMenuItems: MenuItem[] = [
         {
