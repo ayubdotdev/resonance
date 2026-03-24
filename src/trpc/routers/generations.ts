@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db";
 import { uploadAudio } from "@/lib/r2";
 import { TEXT_MAX_LENGTH } from "@/features/text-to-speech/data/constants";
 import { createTRPCRouter, orgProcedure } from "../init";
+import { polar } from "@/lib/polar";
 
 export const generationsRouter = createTRPCRouter({
 
@@ -63,7 +64,27 @@ export const generationsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ input, ctx }) => {
-            
+
+            try {
+                const customerState = await polar.customers.getStateExternal({
+                    externalId: ctx.orgId,
+                })
+
+                const hasActiveSubscription = (customerState.activeSubscriptions ?? []).length > 0;
+                if (!hasActiveSubscription) {
+                    throw new TRPCError({
+                        code: "FORBIDDEN",
+                        message: "SUBSCRIPTION_REQUIRED"
+                    })
+                }
+            } catch (err) {
+                if (err instanceof TRPCError) throw err;
+                // customer dont exist in polar
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: "SUBSCRIPTION_REQUIRED"
+                })
+            }
             const voice = await prisma.voice.findUnique({
                 where: {
                     id: input.voiceId,
@@ -107,7 +128,7 @@ export const generationsRouter = createTRPCRouter({
                 parseAs: "arrayBuffer"
             })
 
-            Sentry.logger.info("Generation started",{
+            Sentry.logger.info("Generation started", {
                 orgId: ctx.orgId,
                 voiceId: input.voiceId,
                 textLength: input.text.length,
@@ -142,7 +163,7 @@ export const generationsRouter = createTRPCRouter({
                     message: "Invalid audio response",
                 });
             }
-            
+
 
             // convert array buffer to buffer because that's what R2 client expects
             const buffer = Buffer.from(data);
@@ -187,10 +208,10 @@ export const generationsRouter = createTRPCRouter({
                     }
                 })
 
-                Sentry.logger.info("Audio generated",{
-                orgId: ctx.orgId,
-                generationId: generation.id
-            })
+                Sentry.logger.info("Audio generated", {
+                    orgId: ctx.orgId,
+                    generationId: generation.id
+                })
             } catch {
                 if (generationId) {
                     await prisma.generation
@@ -213,6 +234,21 @@ export const generationsRouter = createTRPCRouter({
                     message: "Failed to store generated audio",
                 });
             }
+            polar.events
+                .ingest({
+                    events: [
+                    {
+                        name: "tts_generations",
+                        externalCustomerId: ctx.orgId,
+                        metadata: { characters: input.text.length },
+                        timestamp: new Date(),
+                    }
+                ]
+            })
+                .catch(() => { });
+
+
+
             return {
                 id: generationId,
             }
