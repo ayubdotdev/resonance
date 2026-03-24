@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
     _request: Request,
-    { params }: { params: { voiceId: string } }
+    { params }: { params: Promise<{ voiceId: string }> }
 ) {
     const { userId, orgId } = await auth();
     if (!userId || !orgId) {
