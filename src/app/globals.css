@@ -118,14 +118,127 @@
 }
 
 @layer base {
+    html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
     * {
         @apply border-border outline-ring/50;
     }
-    body {
-        @apply bg-background text-foreground;
-    }
+   body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
     button:not(:disabled),
     [role="button"]:not(:disabled) {
         cursor: pointer;
     }
+}
+
+@keyframes landing-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes landing-orb-drift {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(0, -18px, 0) scale(1.03);
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+.landing-shell {
+    font-family: var(--font-landing-body), var(--font-geist-sans), sans-serif;
+    background-color: #f8fafc;
+    background-image:
+        radial-gradient(circle at 18% 12%, rgba(120, 165, 255, 0.2), transparent 38%),
+        radial-gradient(circle at 84% 16%, rgba(255, 221, 168, 0.22), transparent 32%),
+        radial-gradient(circle at 66% 76%, rgba(107, 208, 199, 0.18), transparent 34%),
+        linear-gradient(180deg, #f8fafc 0%, #f7fbff 48%, #f8fafc 100%);
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+.landing-shell {
+    overflow: hidden;
+    position: relative;
+}
+
+.landing-reveal {
+    opacity: 0;
+    animation: landing-fade-up 0.7s ease-out forwards;
+    animation-delay: var(--delay, 0s);
+}
+
+.landing-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(62px);
+    pointer-events: none;
+    opacity: 0.56;
+    animation: landing-orb-drift 9s ease-in-out infinite;
+}
+
+.landing-orb-top {
+    top: -140px;
+    right: -110px;
+    width: 340px;
+    height: 340px;
+    background: rgba(98, 155, 255, 0.34);
+}
+
+.landing-orb-mid {
+    top: 470px;
+    left: -110px;
+    width: 300px;
+    height: 300px;
+    background: rgba(88, 203, 187, 0.24);
+    animation-delay: 1.5s;
+}
+
+.landing-orb-bottom {
+    bottom: 20px;
+    right: 12%;
+    width: 290px;
+    height: 290px;
+    background: rgba(255, 204, 129, 0.32);
+    animation-delay: 2.2s;
+}
+
+.landing-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-reveal,
+    .landing-orb {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
