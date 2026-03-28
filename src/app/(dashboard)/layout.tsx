@@ -1,11 +1,16 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/features/dashboard/components/dashboard-sidebar";
 import { cookies } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const cookiestore = await cookies();
+    const { userId, orgId } = await auth();
     const defaultOpen = cookiestore.get("sidebar_state")?.value === "true"
 
+    if (!userId || !orgId) {
+        return <>{children}</>;
+    }
 
     return (
         <SidebarProvider defaultOpen={defaultOpen} className="h-svh">
