@@ -50,8 +50,6 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],  
   },
   
-  // Additional metadata
-  metadataBase: new URL("https://resonance.ayubb.me"), 
 }
 
 
