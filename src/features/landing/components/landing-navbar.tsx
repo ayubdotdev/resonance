@@ -143,7 +143,7 @@ export function LandingNavbar() {
 
           <div className="hidden justify-end md:flex">
             <GetStartedButton className="h-9 rounded-full bg-linear-to-r from-[#2b7fff] to-[#11a9a4] px-5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(46,122,255,0.24)] transition-all duration-200 hover:brightness-105">
-              Get started
+              Sign In
             </GetStartedButton>
           </div>
 

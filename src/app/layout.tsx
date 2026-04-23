@@ -22,7 +22,36 @@ export const metadata: Metadata = {
     default: "Resonance",
     template: "%s | Resonance"
   },
-  description: "AI-powered text-to-speech and voice cloning platform"
+  description: "AI-powered text-to-speech and voice cloning platform",
+  
+  // Open Graph
+  openGraph: {
+    title: "Resonance",
+    description: "AI-powered text-to-speech and voice cloning platform",
+    url: "https://resonance.ayubb.me", 
+    siteName: "Resonance",
+    images: [
+      {
+        url: "/og-image.png", 
+        width: 1200,
+        height: 630,
+        alt: "Resonance - AI-powered text-to-speech platform",
+      }
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  
+  // Twitter Card
+  twitter: {
+    card: "summary_large_image",
+    title: "Resonance",
+    description: "AI-powered text-to-speech and voice cloning platform",
+    images: ["/og-image.png"],  
+  },
+  
+  // Additional metadata
+  metadataBase: new URL("https://resonance.ayubb.me"), 
 }
 
 
